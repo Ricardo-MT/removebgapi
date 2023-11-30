@@ -13,7 +13,7 @@ load_dotenv()
 async def docs_redirect():
     return RedirectResponse(url='/docs')
 
-@app.post('/remove_background')
+@app.post('/remove_background/')
 async def remove_background(X_API_Key: str | None = Header(default=None), input_file: UploadFile = File(...)):
     # Check if request has API key
     api_key = os.getenv('API_KEY')
