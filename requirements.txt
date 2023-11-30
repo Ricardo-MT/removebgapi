@@ -1,3 +1,5 @@
 fastapi
+python-multipart
+python-dotenv
 rembg
 uvicorn

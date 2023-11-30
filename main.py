@@ -1,17 +1,24 @@
-from fastapi import FastAPI, File, UploadFile, Response, HTTPException
+from fastapi import FastAPI, File, UploadFile, Response, HTTPException, Header
 from fastapi.responses import JSONResponse, RedirectResponse
 from rembg import remove
 from PIL import Image
 import io
+import os
+from dotenv import load_dotenv
 
 app = FastAPI(title='Remove Background', description='Introducing our powerful image background removal API! 🔥🖼️ that streamlines the background removal process for professionals across a wide range of industries! Our API leverages advanced machine learning algorithms to quickly and accurately remove the background from any image, making it perfect for graphic designers, photographers, social media managers, and more. With features like support for a variety of image formats, our API is designed to save you time and streamline your workflow. Plus, with 24/7 uptime and fast response times, you can count on our API to be there when you need it. Try it today and experience the power of advanced background removal at your fingertips! 🚀💻📷')
+load_dotenv()
 
 @app.get("/")
 async def docs_redirect():
     return RedirectResponse(url='/docs')
 
 @app.post('/remove_background')
-async def remove_background(input_file: UploadFile = File(...)):
+async def remove_background(X_API_Key: str | None = Header(default=None), input_file: UploadFile = File(...)):
+    # Check if request has API key
+    api_key = os.getenv('API_KEY')
+    if api_key != X_API_Key:
+        raise HTTPException(status_code=404, message='Not found')
     try:
         input_image = Image.open(io.BytesIO(await input_file.read()))
     except Exception as e:
