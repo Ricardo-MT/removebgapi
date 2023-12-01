@@ -71,4 +71,4 @@ async def exception_handler(request, exc):
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 if __name__ == "__main__":
-    uvicorn.run(app, host=os.getenv('HOST'), port=int(os.getenv('PORT')))
+    uvicorn.run(app, host=os.getenv('HOST', '0.0.0.0'), port=int(os.getenv('PORT', 8080)))
