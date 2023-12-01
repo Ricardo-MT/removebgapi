@@ -1,6 +1,8 @@
 from fastapi import FastAPI, File, UploadFile, Response, HTTPException, Header
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware 
+import uvicorn
 from rembg import remove
 from PIL import Image
 import io
@@ -8,7 +10,14 @@ import os
 from dotenv import load_dotenv
 
 app = FastAPI(title='Remove Background', description='Introducing our powerful image background removal API! 🔥🖼️ that streamlines the background removal process for professionals across a wide range of industries! Our API leverages advanced machine learning algorithms to quickly and accurately remove the background from any image, making it perfect for graphic designers, photographers, social media managers, and more. With features like support for a variety of image formats, our API is designed to save you time and streamline your workflow. Plus, with 24/7 uptime and fast response times, you can count on our API to be there when you need it. Try it today and experience the power of advanced background removal at your fingertips! 🚀💻📷')
-app.mount("/static", StaticFiles(directory="static"), name="static")
+origins = ['*']
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 load_dotenv()
 
@@ -58,3 +67,8 @@ async def exception_handler(request, exc):
         status_code=500,
         content={"message": "Internal server error"},
     )
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+if __name__ == "__main__":
+    uvicorn.run(app, host=os.getenv('HOST'), port=int(os.getenv('PORT')))
