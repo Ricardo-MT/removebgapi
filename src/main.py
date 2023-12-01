@@ -2,14 +2,13 @@ from fastapi import FastAPI, File, UploadFile, Response, HTTPException, Header
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware 
-import uvicorn
 from rembg import remove
 from PIL import Image
 import io
 import os
 from dotenv import load_dotenv
 
-app = FastAPI(title='Remove Background', description='Introducing our powerful image background removal API! 🔥🖼️ that streamlines the background removal process for professionals across a wide range of industries! Our API leverages advanced machine learning algorithms to quickly and accurately remove the background from any image, making it perfect for graphic designers, photographers, social media managers, and more. With features like support for a variety of image formats, our API is designed to save you time and streamline your workflow. Plus, with 24/7 uptime and fast response times, you can count on our API to be there when you need it. Try it today and experience the power of advanced background removal at your fingertips! 🚀💻📷')
+app = FastAPI(title='Remove Background', description='Introducing our powerful image background removal API', docs_url=None)
 origins = ['*']
 app.add_middleware(
     CORSMiddleware,
@@ -21,11 +20,7 @@ app.add_middleware(
 
 load_dotenv()
 
-@app.get("/")
-async def docs_redirect():
-    return RedirectResponse(url='/docs')
-
-@app.put('/remove_background/')
+@app.post('/')
 async def remove_background(X_API_Key: str | None = Header(default=None), input_file: UploadFile = File(...)):
     # Check if request has API key
     api_key = os.getenv('API_KEY')
@@ -69,6 +64,3 @@ async def exception_handler(request, exc):
     )
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
-# if __name__ == "__main__":
-    # uvicorn.run(app, host=os.getenv('HOST', '0.0.0.0'), port=int(os.getenv('PORT', 8080)))
